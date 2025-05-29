@@ -966,30 +966,34 @@
       {{-- Footer --}}
       <div class="card-footer bg-light d-flex justify-content-between align-items-center border-top">
         <span class="fw-bold text-primary mb-0">
-          ${{ number_format($post['price'] ?? 99, 2) }}
+      
         </span>
 
-        <div class="d-flex gap-2">
+        <div class="d-flex gap-2" class="text-center" text-align: center;>
           <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modallong">
             <svg class="shopping-carriage" width="12" height="16">
               <use xlink:href="#shopping-carriage"></use>
             </svg>
           </button>
           
-          <button type="button" class="btn btn-light quick-view-btn"
-            data-bs-toggle="modal" data-bs-target="#quickViewModal"
-            data-title="{{ $post['title'] }}"
-            data-summary="{{ Str::limit($post['summary'] ?? '', 60) }}"
-            data-description="{{ strip_tags($post['description']) }}"
-            data-status="{{ $post['active'] ? 'Active' : 'Inactive' }}"
-            data-author="{{ $post['user']['name'] ?? 'Unknown' }}"
-            data-images='@json(array_map(function($image) {
+          <div class="text-center" text-align: center; >
+            <button text-align: center; type="button" class="btn btn-light quick-view-btn"
+              data-bs-toggle="modal" data-bs-target="#quickViewModal"
+              data-title="{{ $post['title'] }}"
+              data-summary="{{ Str::limit($post['summary'] ?? '', 60) }}"
+              data-description="{{ strip_tags($post['description']) }}"
+              data-status="{{ $post['active'] ? 'Active' : 'Inactive' }}"
+              data-author="{{ $post['user']['name'] ?? 'Unknown' }}"
+              data-images='@json(array_map(function($image) {
                 return asset("storage/post_images/" . $image["img_name"] . "." . $image["extension"]);
-            }, $post["images"]))'>
-            <svg class="quick-view" width="16" height="16">
-              <use xlink:href="#quick-view"></use>
-            </svg>
-        </button>
+              }, $post["images"]))'>
+              
+              <svg class="quick-view" width="16" height="16">
+                <use xlink:href="#quick-view"></use>
+              </svg>
+            </button>
+          </div>
+
 
         </div>
       </div>
@@ -1031,10 +1035,10 @@
 
     @if(auth()->check())
   
-    <form action="{{ route('posts.like', $post->post_id) }}" method="POST">
+<form action="{{ route('posts.like', $post['post_id']) }}" method="POST">
         @csrf
         <button type="submit" class="btn btn-outline-primary btn-sm">
-            @if ($post->isLikedByUser(auth()->id()))
+@if (App\Models\Post::find($post['post_id'])?->isLikedByUser(auth()->id()))
                 ❤️ Liked
             @else
                 🤍 Like
