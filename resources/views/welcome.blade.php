@@ -361,6 +361,16 @@
                 <input type="file" class="form-control" name="image">
                 <span class="text-danger">@error('image'){{ $message }}@enderror</span>
               </div>
+                <div class="col-md-6 mb-3">
+                <label>Country</label>
+                <select name="country_id" id="country" class="form-control">
+                  <option value="">-- Select Country --</option>
+                  @foreach($countries as $country)
+                    <option value="{{ $country->country_id }}">{{ $country->country_name }}</option>
+                  @endforeach
+                </select>
+                <span class="text-danger">@error('country_id'){{ $message }}@enderror</span>
+              </div>
 
             
               <div class="col-md-6 mb-3">

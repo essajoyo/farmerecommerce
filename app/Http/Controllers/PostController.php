@@ -2,11 +2,13 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Country;
 use App\Models\Category;
 use App\Models\SubCategory;
 use App\Models\Post;
 use App\Models\PostType;
 use App\Models\Image;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
 use Illuminate\Support\Facades\Auth;
@@ -17,6 +19,7 @@ class PostController extends Controller
 
 public function welcome()
 {
+    $data['countries'] = Country::all(); 
     $data['categories'] = Category::all();
     $data['postTypes'] = PostType::all();
 
@@ -29,7 +32,7 @@ public function welcome()
     return view('welcome', $data, compact('postImages'));
 }
 
-
+ 
 // public function welcome()
 // {
 //     $categories = Category::all();
@@ -68,78 +71,88 @@ public function store(Request $request)
         'title' => 'required',
         'summary' => 'required',
         'description' => 'required',
-        'active' => 'required|boolean',
-        
-       
     ]);
 
+    // Get the current user's role
+    $roleName = Auth::user()->roles()->value('role_name');
+
+    // If farmer, force inactive (0), else use request
+    $active = ($roleName === 'farmer') ? 0 : ($request->has('active') ? $request->active : 0);
+
+    // Create the post
     $post = Post::create([
         'title' => $request->title,
         'summary' => $request->summary,
         'description' => $request->description,
-        'active' => $request->active,
+        'active' => $active,
         'post_type_id' => $request->post_type_id,
         'user_id' => Auth::id(),
     ]);
 
-  
+    // Handle images (if any)
     if ($request->hasFile('imgName')) {
-    foreach ($request->file('imgName') as $file) {
-        $path = $file->store('post_images', 'public'); 
+        foreach ($request->file('imgName') as $file) {
+            $path = $file->store('post_images', 'public'); 
 
-        // Extract filename and extension
-        $filename = pathinfo($path, PATHINFO_FILENAME);
-        $extension = $file->getClientOriginalExtension();
+            $filename = pathinfo($path, PATHINFO_FILENAME);
+            $extension = $file->getClientOriginalExtension();
 
-        // Save to images table
-        $image = Image::create([
-            'img_name' => $filename,
-            'extension' => $extension,
-        ]);
+            $image = Image::create([
+                'img_name' => $filename,
+                'extension' => $extension,
+            ]);
 
-        // Save to images_brige table
-        DB::table('images_brige')->insert([
-            'post_id' => $post->post_id,
-            'images_id' => $image->id,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+            DB::table('images_brige')->insert([
+                'post_id' => $post->post_id,
+                'images_id' => $image->id,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
     }
-}
-
 
     return redirect()->route('posts.create')->with('success', 'Post created successfully!');
 }
 
 
-    public function index()
-    {
-        dd("h");
-    $posts = Post::with(['user', 'subcategories.category'])->latest()->get();
-        return view('posts.index', compact('posts'));
-    }
 
-    //
-    public function knowledgeBase()
-    {
-        $posts['subcategories'] = SubCategory::with('category')->get();
-        $posts = Post::with(['user', 'subcategories.category'])
-                ->where('post_type_id', 2) 
+   public function index()
+{
+    $posts = Post::with(['user', 'subcategories.category'])->latest()->paginate(10); // paginate(10) = 10 posts per page
+    return view('posts.index', compact('posts'));
+}
+
+    
+  public function knowledgeBase()
+{
+    $posts = Post::with(['user', 'subcategories.category'])
+                ->where('post_type_id', 2)
                 ->paginate(10);
 
+    // Get distinct users who authored knowledge base posts
+    $users = User::whereHas('posts', function ($query) {
+        $query->where('post_type_id', 2);
+    })->get();
 
-        return view('posts.knowledgeBase', compact('posts'));
-    }
+    return view('posts.knowledgeBase', compact('posts', 'users'));
+}
 
-    public function Discussion()
-    {
-        $posts = Post::with(['user', 'subcategories.category'])
-                    ->where('post_type_id', 1) 
-                    ->latest()
-                    ->paginate(10);
 
-        return view('posts.discussion', compact('posts'));
-    }
+public function Discussion()
+{
+    $posts = Post::with(['user', 'subcategories.category'])
+                ->where('post_type_id', 1)
+                ->latest()
+                ->paginate(10);
+
+    // Get distinct users who authored discussion posts
+    $users = User::whereHas('posts', function ($query) {
+        $query->where('post_type_id', 1);
+    })->get();
+
+    return view('posts.discussion', compact('posts', 'users'));
+}
+
 
     public function toggleStatus($post_id)
     {
@@ -152,12 +165,13 @@ public function store(Request $request)
 
     public function show(Post $post)
     {
-        ;
-        // $post->load(['subcategories', 'user']);
-        $posts = Post::with(['user', 'subcategories.category'])->latest()->get();
+       
+         $categories = Category::all();
+        
+        $post = Post::with(['user', 'subcategories.category'])->latest()->first();
        
     //   dd($post["id"]);
-        return view('welcome', compact('post'));
+        return view('posts.show', compact('post','categories'));
     }
 
 
@@ -174,7 +188,7 @@ public function store(Request $request)
             'summary'     => 'required|string|max:500',
             'description' => 'required|string',
             'active'      => 'required|boolean',
-            'issue_date'  => 'required|date',
+           
         ]);
 
         $post = Post::findOrFail($id);
@@ -183,31 +197,24 @@ public function store(Request $request)
         $post->summary     = $request->input('summary');
         $post->description = $request->input('description');
         $post->active      = $request->input('active');
-        $post->issue_date  = $request->input('issue_date');
+       
 
         $post->save();
 
-        return redirect()->route('posts.index')->with('success', 'Post updated successfully!');
+        return redirect()->route('posts.knowLedgeBase')->with('success', 'Post updated successfully!');
     }
 
-    public function like(Request $request, Post $post)
+ 
+
+
+public function postsByAuthor($id)
 {
-    dd($request);
-    $user = auth()->user();
+    $author = User::findOrFail($id); // Find the user by ID
+    $posts = Post::where('user_id', $id)->paginate(10); // Get all posts by this author
 
-    $existing = $post->likes()->where('user_id', $user->id)->first();
-
-    if ($existing) {
-        $existing->delete(); // delete mana unlike
-    } else {
-        $post->likes()->create([
-            'user_id' => $user->id,
-            'is_like' => true
-        ]);
-    }
-
-    return back();
+    return view('posts.author_posts', compact('author', 'posts'));
 }
+
 
 
 

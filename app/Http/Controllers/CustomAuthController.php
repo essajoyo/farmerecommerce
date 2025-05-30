@@ -10,6 +10,10 @@ use App\Models\Location;
 use App\Models\Role;
 use App\Models\Category;
 use App\Models\Post;
+use App\Models\PostType;
+
+
+
 use App\Models\SubCategory;
 
 
@@ -409,11 +413,22 @@ public function showPendingUsers()
    
 
     public function logout(Request $request)
-{
-    Auth::logout();
-    $request->session()->flush();
-    return redirect()->route('login');  
-}
+    {
+
+        Auth::logout();
+        $request->session()->flush();
+        $data['countries'] = Country::all();
+        $data['categories'] = Category::all();
+        $data['postTypes'] = PostType::all();
+
+    $postImages = Post::with(['images', 'user']) 
+        ->where('active', 1)
+        ->latest()
+        ->take(4)
+        ->get()
+        ->toArray();
+    return view('welcome', $data, compact('postImages'));  
+    }
 
     
 

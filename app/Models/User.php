@@ -23,6 +23,12 @@ class User extends Authenticatable
         'image',
     ];
 
+    public function posts()
+{
+    return $this->hasMany(Post::class);
+}
+
+
     public function location()
     {
         return $this->hasOne(Location::class, 'user_id');

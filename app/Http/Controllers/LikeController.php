@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-  use App\Models\Like;
+use App\Models\Like;
 use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -10,52 +10,34 @@ class LikeController extends Controller
 {
 
 
-public function like(Request $request, $postId)
+public function toggleLike($postId)
 {
-    $userId = auth()->id();
+    
+   
 
-    // Check kando like aahe ya na 
-    $existingLike = Like::where('user_id', $userId)
-                        ->where('post_id', $postId)
-                        ->first();
+    $userId = auth()->id(); 
 
-    if ($existingLike) {
-       
-        $existingLike->delete();
-    } else {
-       
-        Like::create([
-            'user_id' => $userId,
-            'post_id' => $postId,
-            'is_like' => true, 
-        ]);
+    if (!$userId) {
+        return response()->json(['message' => 'Unauthorized'], 401);
     }
 
-    return back();
+    $post = Post::findOrFail($postId);
+
+    $like = $post->likes()->where('user_id', $userId)->first();
+
+    if ($like) {
+        $like->delete();
+    } else {
+        $post->likes()->create(['user_id' => $userId]);
+    }
+
+    $likes = $post->likes()->with('user')->get();
+    $likedNames = $likes->pluck('user.name')->toArray();
+
+       return redirect()->back()->with('success', 'Post like status updated.');
+
 }
 
-
-// public function toggleLike(Request $request, $postId)
-// {
-   
-//     $userId = auth()->id();
-
-//     $like = Like::where('user_id', $userId)
-//                 ->where('post_id', $postId)
-//                 ->first();
-
-//     if ($like) {
-//         $like->delete(); 
-//     } else {
-//         Like::create([
-//             'user_id' => $userId,
-//             'post_id' => $postId,
-//             'is_like' => true,
-//         ]);
-//     }
-
-//     return redirect()->back(); // Go back to the same page
-// }
 
 
 }

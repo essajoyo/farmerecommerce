@@ -69,13 +69,20 @@
       
 
         <!-- Status -->
-        <div class="form-group">
-            <label for="active">Status</label>
-            <select name="active" class="form-control" required>
-                <option value="1">Active</option>
-                <option value="0">Inactive</option>
-            </select>
-        </div>
+       @php
+            $roleName = auth()->user()->roles()->value('role_name');
+        @endphp
+
+        @if($roleName !== 'farmer')
+            <div class="form-group">
+                <label for="active">Status</label>
+                <select name="active" id="active" class="form-control">
+                    <option value="1">Active</option>
+                    <option value="0">Inactive</option>
+                </select>
+            </div>
+        @endif
+
 
        <div class="mb-3">
             <label for="imgName" class="form-label">Upload Multiple Images</label>

@@ -19,6 +19,12 @@ use App\Http\Controllers\LikeController;
 //Route::get('/', [PostController::class, 'show']);
 Route::get('/', [PostController::class, 'welcome']);
 
+
+   Route::post('admin/post/{id}/like', [LikeController::class, 'toggleLike'])->name('post.like');
+        
+        Route::post('/post/{id}/like', [LikeController::class, 'toggleLike'])->name('post.like');
+        Route::post('admin/post/{id}/like', [LikeController::class, 'toggleLike'])->name('post.like');
+        Route::post('/admin/post/{post}/like', [LikeController::class, 'toggleLike'])->name('post.like');
 Route::get('/get-subcategories/{category_id}', [PostController::class, 'getSubcategories']);
 
 Route::get('/user/{id}/edit', [CustomAuthController::class, 'edit'])->name('user.edit');
@@ -33,6 +39,13 @@ Route::get('/admin/pending-users', [CustomAuthController::class, 'showPendingUse
 Route::get('/admin/rejected-users', [CustomAuthController::class, 'showRejectedUsers'])->name('admin.reject-user');
 Route::get('/admin/approved-users', [CustomAuthController::class, 'showAprrovedUsers'])->name('admin.approved-users');
 //img
+
+Route::get('/posts/author/{id}', [PostController::class, 'postsByAuthor'])->name('posts.author_related');
+
+ Route::get('/knowledge-base', [PostController::class, 'knowledgeBase'])->name('posts.knowLedgeBase');
+Route::get('/discussion', [PostController::class, 'Discussion'])->name('posts.discussion');
+    Route::get('/posts/{post}/edit', [PostController::class, 'edit'])->name('posts.edit');
+    Route::put('/posts/{post}', [PostController::class, 'update'])->name('posts.update'); // Save 
 
 
 Route::get('admin', [CustomAuthController::class, 'adminDashboard'])->name('admin');
@@ -84,8 +97,20 @@ Route::get('/registration', [CustomAuthController::class, 'registration'])->name
 Route::post('/registration-user', [CustomAuthController::class, 'registerUser'])->name('register-user');
 Route::post('login-user', [CustomAuthController::class, 'loginUser'])->name('login-user');
 
+Route::get('/posts/create', [PostController::class, 'create'])->name('posts.create'); 
+Route::get('/posts/{post}', [PostController::class, 'show'])->name('posts.show');
+Route::post('/posts', [PostController::class, 'store'])->name('posts.store');
 
-Route::post('/logout', [CustomAuthController::class, 'logout'])->middleware('auth')->name('logout');
+Route::get('/subcategory/create', [CustomAuthController::class, 'createSubCategory'])->name('admin.subcategory_create');
+Route::post('/subcategory/store', [CustomAuthController::class, 'storeSubCategory'])->name('admin.subcategory_store');
+
+Route::get('/category/create', [CustomAuthController::class, 'createCategory'])->name('category.create');
+Route::post('/category/store', [CustomAuthController::class, 'storeCategory'])->name('category.store');
+Route::get('category', [CustomAuthController::class, 'category'])->name('admin.category');
+
+
+
+Route::post('/logout', [CustomAuthController::class, 'logout'])->name('logout');
 
 Route::get('farmer', [CustomAuthController::class, 'farmerDashboard'])->name('farmer.dashboard');
 Route::get('academics', [CustomAuthController::class, 'academicsDashboard'])->name('academics.dashboard');
@@ -93,8 +118,9 @@ Route::get('consultant', [CustomAuthController::class, 'consultantDashboard'])->
 Route::get('/dashboard', [CustomAuthController::class, 'dashboard1'])->name('user.dashboard');
 
 //Route::get('category', [CustomAuthController::class, 'category'])->name('admin.category');
+// Route::post('/post/{post}/like', [LikeController::class, 'toggleLike'])->name('post.like');
 
-
+// Route::post('/post/{post}/like', [LikeController::class, 'like'])->name('post.like');
 Route::middleware(['auth'])->group(function () {
 
 Route::get('/admin/admin', [CustomAuthController::class, 'adminDashboard'])
@@ -134,11 +160,10 @@ Route::post('/admin/user/reject/{id}', [CustomAuthController::class, 'rejectUser
         // Class Management Routes
         Route::get('class/create', [ClassesController::class, 'index'])->name('class.create');
         // Route::post('class/store', [ClassesController::class, 'store'])->name('class.store');
-         Route::post('/', [ClassesController::class, 'store']);
+        Route::post('/', [ClassesController::class, 'store']);
         Route::get('class/read', [ClassesController::class, 'read'])->name('class.read');
 
-        Route::get('category', [CustomAuthController::class, 'category'])->name('admin.category');
-      //  Route::get('category/create', [CustomAuthController::class, 'createSubCategory'])->name('admin.createSubCategory');
+      //Route::get('category/create', [CustomAuthController::class, 'createSubCategory'])->name('admin.createSubCategory');
 
 
         //table
@@ -150,16 +175,11 @@ Route::post('/admin/user/reject/{id}', [CustomAuthController::class, 'rejectUser
 
 Route::middleware('auth')->group(function () {
 
-Route::get('/category/create', [CustomAuthController::class, 'createCategory'])->name('category.create');
-Route::post('/category/store', [CustomAuthController::class, 'storeCategory'])->name('category.store');
-
 
 
 });
 Route::middleware('auth')->group(function () {
-    Route::get('/subcategory/create', [CustomAuthController::class, 'createSubCategory'])->name('admin.subcategory_create');
-    Route::post('/subcategory/store', [CustomAuthController::class, 'storeSubCategory'])->name('admin.subcategory_store');
-
+  
 });
 
 
@@ -175,25 +195,25 @@ Route::get('/get-cities/{state_id}', [CustomAuthController::class, 'getCities'])
 
     // Post Routes
     Route::get('/posts', [PostController::class, 'index'])->name('posts.index');      
-    Route::get('/posts/create', [PostController::class, 'create'])->name('posts.create'); 
-    Route::post('/posts', [PostController::class, 'store'])->name('posts.store');
-    Route::get('/knowledge-base', [PostController::class, 'knowledgeBase'])->name('posts.knowLedgeBase');
-    Route::get('/discussion', [PostController::class, 'Discussion'])->name('posts.discussion');
+   
 
-    Route::get('/posts/{post}/edit', [PostController::class, 'edit'])->name('posts.edit');
-
-    Route::get('/', [PostController::class, 'show'])->name('posts.show'); // Details view
-    Route::put('/posts/{post}', [PostController::class, 'update'])->name('posts.update'); // Save 
  
     Route::post('admin/posts/{post}/like', [PostController::class, 'like'])->name('posts.like');
     
    // Route::patch('/posts/{post}/toggle-status', [PostController::class, 'toggleStatus'])->name('posts.toggleStatus'); 
         Route::get('/posts/toggle-status/{post_id}', [PostController::class, 'toggleStatus'])->name('posts.toggle_status');
 
-        Route::post('/admin/posts/{post}/like}', [LikeController::class, 'like'])->name('posts.like');
+       // Route::post('/admin/posts/{post}/like}', [LikeController::class, 'like'])->name('posts.like');
+     
 
-        Route::post('/post/{id}/like', [LikeController::class, 'toggleLike'])->name('post.like');
+        // // ✅ Use 'like' instead of 'toggleLike'
+        // Route::post('/post/{post}/like', [LikeController::class, 'like'])->name('post.like');
 
+        // Route::post('/post/{post}/like', [LikeController::class, 'toggleLike'])->middleware('auth');
+
+    
+
+        // Route::post('/post/{post}/like', [LikeController::class, 'toggleLike'])->middleware('auth');
 
 
 

@@ -4,7 +4,7 @@
     @include('disign.nav')
 
     <title>Edit Post</title>
-    
+    <br>
 <style>
     .post-container {
         padding: 40px 20px;
@@ -79,6 +79,7 @@
 
 <body>
     <div class="post-container">
+        <br>
         <h2 class="post-title">📝 Edit Post: {{ $post->title }}</h2>
 <form action="{{ route('posts.update', $post->post_id) }}" method="POST">
             @csrf
@@ -105,8 +106,7 @@
                         <option value="0" {{ !$post->active ? 'selected' : '' }}>Inactive</option>
                     </select>
 
-                    <label><strong>Issue Date:</strong></label>
-                    <input type="date" name="issue_date" class="form-control" value="{{ old('issue_date', $post->issue_date) }}" required>
+                    
                 </div>
 
                 <div class="card-footer post-footer">
