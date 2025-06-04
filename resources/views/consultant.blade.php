@@ -1,1 +1,2 @@
-@include('disign.consultant_nav')
+@include('disign.nav')
+

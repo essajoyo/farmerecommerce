@@ -61,23 +61,66 @@
 
                 <p><strong>Issue Date:</strong> {{ $post->issue_date }}</p>
 
-                {{-- ✅ IMAGES --}}
-                <p><strong>Images:</strong></p>
-                <div class="image-gallery">
-                    @forelse($post->images as $image)
-                        <div style="display:inline-block; text-align:center;">
-                            <img src="{{ asset('storage/images/' . $image->img_name . '.' . $image->extension) }}"
-                                 alt="Image">
-                            <br>
-                            <a href="{{ asset('storage/images/' . $image->img_name . '.' . $image->extension) }}"
-                               class="btn btn-sm btn-outline-primary mt-1" download>⬇️ Download</a>
-                        </div>
-                    @empty
-                        <p class="text-muted">No images found.</p>
-                    @endforelse
-                </div>
+               <hr>
+           <p><strong>Post Images:</strong></p>
+            <div class="row">
 
-                {{-- ✅ LIKE BUTTON --}}
+            
+         @php
+    $images = collect($post->images)->filter(function ($image) {
+        return in_array(strtolower($image->extension), ['jpg', 'jpeg', 'png', 'gif', 'webp']);
+    });
+
+    $files = collect($post->images)->filter(function ($image) {
+        return !in_array(strtolower($image->extension), ['jpg', 'jpeg', 'png', 'gif', 'webp']);
+    });
+@endphp
+
+{{-- Image Section --}}
+@if($images->isNotEmpty())
+    <p><strong>Post Images:</strong></p>
+    <div class="row">
+        @foreach($images as $image)
+            @php
+                $filePath = asset('storage/post_images/' . $image->img_name . '.' . $image->extension);
+            @endphp
+            <div class="col-md-3 text-center mb-3">
+                <img src="{{ $filePath }}" class="img-fluid rounded mb-2" alt="Image">
+                <br>
+                <a href="{{ $filePath }}" class="btn btn-sm btn-outline-primary mt-1" download>
+                    ⬇️ Download
+                </a>
+            </div>
+        @endforeach
+    </div>
+@endif
+
+{{-- File Section --}}
+@if($files->isNotEmpty())
+    <p><strong>Post Files:</strong></p>
+    <div class="row">
+        @foreach($files as $file)
+            @php
+                $filePath = asset('storage/post_images/' . $file->img_name . '.' . $file->extension);
+            @endphp
+            <div class="col-md-3 text-center mb-3">
+                <div style="font-size: 3rem;">📄</div>
+                <p class="text-muted">{{ $file->img_name . '.' . $file->extension }}</p>
+                <a href="{{ $filePath }}" class="btn btn-sm btn-outline-primary mt-1" download>
+                    ⬇️ Download
+                </a>
+            </div>
+        @endforeach
+    </div>
+@endif
+
+@if($images->isEmpty() && $files->isEmpty())
+    <div class="col-12 text-muted">No files or images uploaded for this post.</div>
+@endif
+
+
+
+              
                 <form action="{{ route('post.like', $post->post_id) }}" method="POST" class="mt-3">
                     @csrf
                     <button type="submit" class="btn btn-outline-danger btn-sm">

@@ -13,9 +13,7 @@ use App\Models\Post;
 use App\Models\PostType;
 
 
-
 use App\Models\SubCategory;
-
 
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Auth;
@@ -278,6 +276,7 @@ public function viewProfile($id)
   
 public function loginUser(Request $request)
 {
+
     
     $request->validate([
         'email' => 'required|email',
@@ -406,31 +405,13 @@ public function showPendingUsers()
     }
    public function   consultantDashboard()
     {
-        // $data = Auth::user();
-        return view('consultant');
+    $posts = Post::with(['user', 'subcategories.category'])->latest()->paginate(10);
+    
+    return view('consultant', compact('posts'));
     }
 
    
 
-    public function logout(Request $request)
-    {
-
-        Auth::logout();
-        $request->session()->flush();
-        $data['countries'] = Country::all();
-        $data['categories'] = Category::all();
-        $data['postTypes'] = PostType::all();
-
-    $postImages = Post::with(['images', 'user']) 
-        ->where('active', 1)
-        ->latest()
-        ->take(4)
-        ->get()
-        ->toArray();
-    return view('welcome', $data, compact('postImages'));  
-    }
-
-    
 
 
     public function dashboard1()
@@ -568,8 +549,10 @@ public function showRejectedUsers()
    
 public function category()
 {
-   
-    return view('admin.category'); 
+       $posts = Post::all();
+
+    return view('admin.category', ['posts' => $posts]);
+
 }
 
 public function createCategory()
@@ -581,6 +564,7 @@ public function createCategory()
 
 public function storeCategory(Request $request)
 {
+  
     $request->validate([
         'categoryName' => 'required|string|max:255',
         'categoryImg' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
@@ -605,13 +589,14 @@ public function storeCategory(Request $request)
 // sub category
 public function createSubCategory()
 {
-   
+    $posts = Post::all();
     $categories = Category::all(); 
-    return view('admin.subcategory_create', compact('categories'));
+    return view('admin.subcategory_create', compact('categories'), ['posts' => $posts]);
 }
 
 public function storeSubCategory(Request $request)
 {
+   
     $request->validate([
         'category_id' => 'required|exists:category,id',
         'post_name' => 'required|string|max:255',

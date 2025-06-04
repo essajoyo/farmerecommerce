@@ -26,8 +26,7 @@
     @endif
     <br>
     
-    <form align ="center" action="{{ route('academic-year.store') }}" method="POST" class="col-md-3 offset-md-0">
-    @csrf
+  
       
 
 <div class="container mt-4">

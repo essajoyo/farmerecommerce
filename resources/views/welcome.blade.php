@@ -99,15 +99,6 @@
   </svg>
 
 
-
-
-
-  <!-- Modal -->
-
-
-
-  <!-- / quick view -->
-
   <div class="modal fade" id="modallong" tabindex="-1" aria-modal="true" role="dialog">
     <div class="modal-dialog modal-fullscreen-md-down modal-md modal-dialog-centered">
       <div class="modal-content">
@@ -561,7 +552,8 @@
                     <a href="index.html" class="dropdown-item">About Us </a>
                   </li>
                   <li>
-                    <a class="dropdown-item" href="index.html">Shop </a>
+
+                    <a class="dropdown-item" href="{{ url('product/all_product') }}">Shop </a>
                   </li>
                   <li>
                     <a class="dropdown-item" href="index.html">Blog </a>
@@ -580,11 +572,12 @@
                   </li>
                   <li>
                     <a href="#" data-bs-toggle="modal" data-bs-target="#modallogin" class="dropdown-item">Login</a>
+
                   </li>
                 </ul>
               </li>
               <li class="nav-item">
-                <a class="nav-link me-5" href="index.html">Shop</a>
+                <a class="nav-link me-5" href="{{ url('product/all_product') }}">Shop</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link me-5" href="#">Sale</a>
@@ -1335,3 +1328,11 @@ function forceCloseModalCleanup() {
     $('.modal-backdrop').remove();
 }
 </script>
+@if(session('showLoginModal'))
+    <script>
+        window.onload = function() {
+            var myModal = new bootstrap.Modal(document.getElementById('modallogin'));
+            myModal.show();
+        };
+    </script>
+@endif

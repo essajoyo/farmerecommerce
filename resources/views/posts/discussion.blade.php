@@ -1,5 +1,6 @@
 @include('disign.nav')
 
+
 <style>
     /* Card and container styling */
     .card {

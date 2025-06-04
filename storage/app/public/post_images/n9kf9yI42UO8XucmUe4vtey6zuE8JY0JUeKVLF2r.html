@@ -1,0 +1,73 @@
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <title></title>
+    <link rel="stylesheet" href="assets/styles.css">
+
+</head>
+<body id = "final-example">
+    <div class="wrapper">
+            <div id="banner">
+                
+                    <img src="img/banner.png" alt="">
+            </div><!--//banner -->
+
+
+            <div id="nav">
+                <ul>
+                   
+<ul>
+    <li><a href="home.php">Home</a></li><li><a href="team.php">Team</a></li><li><a href="menu.php">Menu</a></li><li><a href="contact.php">Contact</a></li></ul>                </ul>
+            </div><!--//nav -->
+
+
+            <div class="content">
+
+                
+                <div id="footer" class = "cf">
+                 
+                 <div class="column three">
+                     <strong>Phone</strong>
+                     03173447987
+                 </div>
+
+                 <div class="column three">
+                     <strong>Location</strong>
+                       Jamshoro 
+                 </div>
+
+                 <div class="column three last">
+                 <strong>hours</strong>
+                 <em>Tuesday - Thursday</em><br>
+                 4:00 - 11:00pm<br><br>
+
+                 <em>Friday - Saturday</em><br>
+                 4:00 - 9:00pm<br><br>
+
+                 <em>sunday - Monday</em><br>
+                 Closed<br><br>
+                 </div>
+
+             </div><!--//footer -->
+
+             <small>&copy;2025 Faranking fine dining</small>
+
+             </div><!--//content -->
+ </div><!--//wrapper -->
+  <div class="copyright-info">
+     <h4>Code Dynamic Websites with PHP</h4>
+<h5>Copyright &copy;2025 <a href="http://bradhussey.ca/" target="_blank">Brad Hussey</a> of <a href="http://codecollege.ca" target="_blank">CodeCollege.ca</a></h5>  </div>
+</body>
+</html>
+<br />
+<b>Fatal error</b>:  Uncaught Exception: FPDF error: Some data has already been output, can't send PDF file in C:\xampp\htdocs\dynamictemplet\includes\fpdf186\fpdf.php:267
+Stack trace:
+#0 C:\xampp\htdocs\dynamictemplet\includes\fpdf186\fpdf.php(1058): FPDF-&gt;Error('Some data has a...')
+#1 C:\xampp\htdocs\dynamictemplet\includes\fpdf186\fpdf.php(1017): FPDF-&gt;_checkoutput()
+#2 C:\xampp\htdocs\dynamictemplet\download.php(57): FPDF-&gt;Output('D', 'Order_1.pdf')
+#3 {main}
+  thrown in <b>C:\xampp\htdocs\dynamictemplet\includes\fpdf186\fpdf.php</b> on line <b>267</b><br />

@@ -16,6 +16,8 @@ return new class extends Migration
             $table->id();
             $table->string('img_name');
             $table->string('extension');
+            $table->string('mime_type')->nullable();
+
             $table->timestamps();
 
        

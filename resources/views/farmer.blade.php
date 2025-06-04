@@ -1,2 +1,3 @@
-@include('disign.farmar_nav')
+@include('disign.nav')
+
  

@@ -1,1 +1,2 @@
-@include('disign.academics_nav')
+@include('disign.nav')
+

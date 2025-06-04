@@ -4,8 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class ImagesBrige extends Model
+class ImageBridge extends Model
 {
-     protected $table = 'images_brige';
+    protected $table = 'image_bridge';
+
     protected $fillable = ['post_id', 'images_id'];
 }

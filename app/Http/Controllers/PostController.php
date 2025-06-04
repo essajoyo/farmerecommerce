@@ -19,6 +19,7 @@ class PostController extends Controller
 
 public function welcome()
 {
+
     $data['countries'] = Country::all(); 
     $data['categories'] = Category::all();
     $data['postTypes'] = PostType::all();
@@ -30,6 +31,19 @@ public function welcome()
         ->get()
         ->toArray();
     return view('welcome', $data, compact('postImages'));
+}
+
+public function logout(Request $request)
+{
+    Auth::logout();
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
+
+    
+    session()->flash('showLoginModal', true);
+
+    
+    return redirect()->route('home');
 }
 
  
@@ -90,26 +104,36 @@ public function store(Request $request)
     ]);
 
     // Handle images (if any)
-    if ($request->hasFile('imgName')) {
-        foreach ($request->file('imgName') as $file) {
-            $path = $file->store('post_images', 'public'); 
+   if ($request->hasFile('imgName')) {
+    foreach ($request->file('imgName') as $file) {
 
-            $filename = pathinfo($path, PATHINFO_FILENAME);
-            $extension = $file->getClientOriginalExtension();
+        // Store file in 'public/post_images' folder
+        $path = $file->store('post_images', 'public');
 
-            $image = Image::create([
-                'img_name' => $filename,
-                'extension' => $extension,
-            ]);
+        // Extract details
+        $filename = pathinfo($path, PATHINFO_FILENAME); // stored file name without extension
+        $extension = $file->getClientOriginalExtension(); // e.g. 'jpg', 'pdf'
+        $mimeType = $file->getClientMimeType(); // e.g. 'image/jpeg' or 'application/pdf'
+        $originalName = $file->getClientOriginalName(); // optional: full original file name
 
-            DB::table('images_brige')->insert([
-                'post_id' => $post->post_id,
-                'images_id' => $image->id,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-        }
+        // Create image/file record
+        $image = Image::create([
+            'img_name'    => $filename,
+            'extension'   => $extension,
+            'mime_type'   => $mimeType,
+            'file_name'   => $originalName, // optional, good for display
+        ]);
+
+        // Insert into pivot table
+        DB::table('images_brige')->insert([
+            'post_id'    => $post->post_id,
+            'images_id'  => $image->id,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
     }
+}
+
 
     return redirect()->route('posts.create')->with('success', 'Post created successfully!');
 }
@@ -118,6 +142,7 @@ public function store(Request $request)
 
    public function index()
 {
+    
     $posts = Post::with(['user', 'subcategories.category'])->latest()->paginate(10); // paginate(10) = 10 posts per page
     return view('posts.index', compact('posts'));
 }
@@ -126,32 +151,32 @@ public function store(Request $request)
   public function knowledgeBase()
 {
     $posts = Post::with(['user', 'subcategories.category'])
-                ->where('post_type_id', 2)
+                ->where('post_type_id', 1,2)
                 ->paginate(10);
 
     // Get distinct users who authored knowledge base posts
     $users = User::whereHas('posts', function ($query) {
-        $query->where('post_type_id', 2);
+        $query->where('post_type_id', 1,2);
     })->get();
 
     return view('posts.knowledgeBase', compact('posts', 'users'));
 }
 
 
-public function Discussion()
-{
-    $posts = Post::with(['user', 'subcategories.category'])
-                ->where('post_type_id', 1)
-                ->latest()
-                ->paginate(10);
+// public function Discussion()
+// {
+//     $posts = Post::with(['user', 'subcategories.category'])
+//                 ->where('post_type_id', 1)
+//                 ->latest()
+//                 ->paginate(10);
 
-    // Get distinct users who authored discussion posts
-    $users = User::whereHas('posts', function ($query) {
-        $query->where('post_type_id', 1);
-    })->get();
+//     // Get distinct users who authored discussion posts
+//     $users = User::whereHas('posts', function ($query) {
+//         $query->where('post_type_id', 1);
+//     })->get();
 
-    return view('posts.discussion', compact('posts', 'users'));
-}
+//     return view('posts.discussion', compact('posts', 'users'));
+// }
 
 
     public function toggleStatus($post_id)
@@ -162,23 +187,23 @@ public function Discussion()
 
         return redirect()->back()->with('msg', 'Post status updated successfully!');
     }
+public function show(Post $post)
+{
+    $categories = Category::all();
+    dd($post);
+    // Eager load relationships for the specific post
+    $post->load(['user', 'subcategories.category', 'images', 'likes.user']);
 
-    public function show(Post $post)
-    {
-       
-         $categories = Category::all();
-        
-        $post = Post::with(['user', 'subcategories.category'])->latest()->first();
-       
-    //   dd($post["id"]);
-        return view('posts.show', compact('post','categories'));
-    }
+    return view('posts.show', compact('post', 'categories'));
+}
+
 
 
     public function edit($id)
     {
+        $posts = Post::all();
         $post = Post::with('user', 'subcategories')->findOrFail($id);
-        return view('posts.update', compact('post'));
+        return view('posts.update', compact('post','posts'));
     }
 
     public function update(Request $request, $id)

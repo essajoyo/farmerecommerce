@@ -58,23 +58,39 @@
                                 <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                                 Dashboard
                             </a>
-                        <div class="sb-sidenav-menu-heading">Interface</div>
-                          <!-- Catalog Section -->
-                                <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseCatalog" aria-expanded="false" aria-controls="collapseCatalog">
-                                    <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
-                                    Catalog
-                                    <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                                </a>
-                                <div class="collapse" id="collapseCatalog" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
-                                    <nav class="sb-sidenav-menu-nested nav">
-                                        <a class="nav-link" href="{{ route('admin.subcategory_create') }}">Post</a>
-                                        <a class="nav-link" href="{{ route('admin.category') }}">Category</a> 
-                                         <a class="nav-link" href="{{ route('posts.create') }}">Add Post</a>
-                                         <a class="nav-link" href="{{ route('posts.index') }}">show Posts</a>
-                                         <a class="nav-link" href="{{ route('posts.knowLedgeBase') }}">Knowledge Base</a>
-                                         <a class="nav-link" href="{{ route('posts.discussion') }}">discussion Base</a>
-                                    </nav>
-                                </div>
+
+                            <!-- Manage Product Section -->
+                                    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseProduct" aria-expanded="false" aria-controls="collapseProduct">
+                                        <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
+                                        Manage Product
+                                        <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                                    </a>
+                                    <div class="collapse" id="collapseProduct" aria-labelledby="headingProduct" data-bs-parent="#sidenavAccordion">
+                                        <nav class="sb-sidenav-menu-nested nav">
+                                            <a class="nav-link" href="{{ url('product/all_product') }}">All Product</a>
+                                            <a class="nav-link" href="{{ url('product/add_product') }}">Add Product</a>
+                                        </nav>
+                                    </div>
+
+                                    <div class="sb-sidenav-menu-heading">Interface</div>
+
+                                    <!-- Catalog Section -->
+                                    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseCatalog" aria-expanded="false" aria-controls="collapseCatalog">
+                                        <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
+                                        Catalog
+                                        <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                                    </a>
+                                    <div class="collapse" id="collapseCatalog" aria-labelledby="headingCatalog" data-bs-parent="#sidenavAccordion">
+                                        <nav class="sb-sidenav-menu-nested nav">
+                                            <a class="nav-link" href="{{ route('admin.subcategory_create') }}">Post</a>
+                                            <a class="nav-link" href="{{ route('admin.category') }}">Category</a> 
+                                            <a class="nav-link" href="{{ route('posts.create') }}">Add Post</a>
+                                            <a class="nav-link" href="{{ route('posts.index') }}">Show Posts</a>
+                                            <a class="nav-link" href="{{ route('posts.knowLedgeBase') }}">Knowledge Base</a>
+                                            <a class="nav-link" href="{{ route('posts.discussion') }}">Discussion Base</a>
+                                        </nav>
+                                    </div>
+
 
                                 <!-- Users Status Section -->
                                 <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseUserStatus" aria-expanded="false" aria-controls="collapseUserStatus">
@@ -102,8 +118,7 @@
                                   
                                     <div class="collapse" id="pagesCollapseError" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordionPages">
                                         <nav class="sb-sidenav-menu-nested nav">
-                                            <a class="nav-link" href="{{route('academic-year.create')}}">Add Academic Year</a>
-                                            <a class="nav-link" href="{{route('class.create')}}">class create</a>
+
                                             <a class="nav-link" href="{{route('registration')}}">register</a>
                                         </nav>
                                     </div>

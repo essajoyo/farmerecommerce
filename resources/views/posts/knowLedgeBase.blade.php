@@ -1,5 +1,4 @@
 @include('disign.nav')
-
 <style>
     /* Card and container styling */
     .card {
@@ -132,7 +131,7 @@
                                             $roleName = auth()->user()->roles()->value('role_name');
                                         @endphp
 
-                                      @if($roleName === 'admin' || ($roleName === 'farmer' || ($roleName === 'academics' ||($roleName === 'consultant' && $post->user_id === auth()->id()))))
+                                      @if( $post->user_id === auth()->id())
                                             <a href="{{ route('posts.edit', $post) }}" class="btn btn-warning btn-sm">✏️ Edit</a>
                                         @endif
 
